@@ -1,0 +1,41 @@
+<TITLE>Chef Active Orders</TITLE>
+<?php
+
+        $pref_path = "/var/www/kongsi/";
+        
+        // include the necessary classes
+        include $pref_path."config.php";
+        include $pref_path."include/adodb5/adodb.inc.php";
+        include $pref_path."include/class.DateHelperExt.php";
+        
+        $url1=$_SERVER['REQUEST_URI'];
+        header("Refresh: 5; URL=$url1");
+
+        
+        $smsfolder = '/var/spool/gammu/inbox/';
+        $sms_error = "";
+        $date = new DateTime();
+        $result = "";
+        
+        if ($handle = opendir($smsfolder)) {
+                        while (false !== ($entry = readdir($handle))) {
+                        if ($entry != "." && $entry != ".." && (pathinfo($entry)["extension"]) == "txt") {
+                                $content  = file_get_contents($smsfolder . $entry);
+                                $smscontent = explode(" ",$content);
+
+//                              $file_part = explode(" ",$entry);       
+//                              print_r ($file_part);
+                                $command =  $smscontent[0];
+                                $customer_id =  $smscontent[1];
+                                $menu_id =  $smscontent[2];
+                                $quantity = $smscontent[3];
+                                $securitycode =  $smscontent[4];
+                                echo "<br/>";
+                                echo $date->format('Y-m-d H:i:s')."<br/>";
+                                echo 'CustomerID: ' . $customer_id . "<br/>" . 'MenuID: ' .  $menu_id . "<br/>" . 'Quantity: ' . $quantity . "<br/>"  . 'SecurityCode: ' . $securitycode . "<br/>";
+                                echo "<a href=http://www.google.com>Confirm</a>";               
+                        }
+                }
+        fclose($handle);
+        }
+?>
